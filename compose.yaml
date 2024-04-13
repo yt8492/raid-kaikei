@@ -12,6 +12,7 @@ services:
       - DATABASE_NAME=database
       - CHANNEL_SECRET=${CHANNEL_SECRET}
       - CHANNEL_ACCESS_TOKEN=${CHANNEL_ACCESS_TOKEN}
+      - CHANNEL_ID=${CHANNEL_ID}
   db:
     image: mysql:latest
     environment:
@@ -25,3 +26,4 @@ services:
 
 volumes:
   db_data:
+  
