@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS user_event(
   user_id VARCHAR(255) NOT NULL,
   event_id INT NOT NULL,
   payment_status TINYINT NOT NULL,
-  fixed_payment TINYINT NOT NULL,
+  fixed_payment INT,
   PRIMARY KEY(user_id, event_id),
   FOREIGN KEY(event_id) REFERENCES event(id)
 );

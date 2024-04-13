@@ -18,7 +18,7 @@ model UserEvent {
   user_id       String     // ユーザーID
   event_id      Int        // イベントID
   payment_status Boolean    // 支払いステータス
-  fixed_payment Boolean    // 固定支払いフラグ
+　fixedPayment  Int?    // 固定支払い
   // 主キーを複合キーとして定義
   @@id([user_id, event_id])
   // ユーザーとの関連性を定義
