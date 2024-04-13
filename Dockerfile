@@ -8,7 +8,9 @@ RUN npm ci
 
 COPY src src
 
-RUN ls -a
+COPY prisma prisma
+
+RUN npx prisma generate
 
 RUN npm run build
 
