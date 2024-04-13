@@ -1,5 +1,6 @@
 import express, { Application } from 'express'
 import callback from "./router/callback";
+import api from "./router/api";
 
 import {
     middleware,
@@ -28,8 +29,6 @@ app.use((req, res, next) => {
 })
 
 app.use('/callback',callback);
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use('/api', api);
 
 export default app;
