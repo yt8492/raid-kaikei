@@ -33,3 +33,15 @@ try {
       url: `https://line.yuorei.com/invite/${data.id}`
     });
   }
+
+
+export const getevents = async (req: Request, res: Response): Promise<Response> => {
+  let data: Event[];
+  try {
+    data = await eventDB.getEvents();
+  } catch (error) {
+    console.error("Error in getting all events:", error);
+    throw new Error(`Error in getting all events: ${error}`);
+  }
+  return res.status(200).json(data);
+}

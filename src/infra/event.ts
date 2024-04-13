@@ -20,3 +20,14 @@ export const createEvent = async (event:Event) => {
         throw new Error(`Error in getting all users: ${error}`);
     }
 }
+
+export const getEvents = async () => {
+    try {
+        const data = await prisma.event.findMany();
+        return data as Event[];
+    }
+    catch (error) {
+        console.error("Error in getting all users:", error);
+        throw new Error(`Error in getting all users: ${error}`);
+    }
+}

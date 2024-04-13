@@ -12,6 +12,7 @@ router.use(express.urlencoded({ extended: true }));
 
 
 router.post('/event' ,eventRouter.event);
+router.get('/event' ,eventRouter.getevents);
 
 router.get('/verify', (req, res, next) => (async () => {
   const authorization = req.headers.authorization;
