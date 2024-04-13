@@ -2,43 +2,38 @@
 
 // イベントテーブルの定義
 model Event {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @unique
   title       String
   description String
-  created_at  DateTime  @default(now())
-  updated_at  DateTime  @updatedAt
-  // イベントとユーザーの関連性を定義
-  UserEvent   UserEvent[]
-  // イベント支払いとの関連性を定義
-  EventPayment EventPayment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  UserEvents  UserEvent[]
+  EventPayments EventPayment[]
 }
 
-// ユーザーイベントテーブルの定義
 model UserEvent {
-  user_id       String     // ユーザーID
-  event_id      Int        // イベントID
-  payment_status Boolean    // 支払いステータス
-　fixedPayment  Int?    // 固定支払い
-  // 主キーを複合キーとして定義
-  @@id([user_id, event_id])
-  // ユーザーとの関連性を定義
-  User          User       @relation(fields: [user_id], references: [id])
-  // イベントとの関連性を定義
-  Event         Event      @relation(fields: [event_id], references: [id])
-  // ユーザーイベントとイベント支払いの関連性を定義
-  EventPayment  EventPayment[]
+  userId        String
+  eventId       String
+  paymentStatus Int
+  fixedPayment  Int?
+  @@id([userId, eventId])
+  User          User     @relation(fields: [userId], references: [id])
+  Event         Event    @relation(fields: [eventId], references: [id])
 }
 
-// イベント支払いテーブルの定義
 model EventPayment {
-  id           Int       @id @default(autoincrement())
-  event_id     Int       // イベントID
-  amount       Int       // 金額
-  claimant_id  String    // 請求者ID
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
-  // イベントとの関連性を定義
-  Event        Event     @relation(fields: [event_id], references: [id])
-  // ユーザーイベントとの関連性を定義
-  UserEvent    UserEvent @relation(fields: [claimant_id], references: [user_id])
+  id          String    @id @unique
+  eventId     String
+  amount      Int
+  claimantId  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  User        User      @relation(fields: [claimantId], references: [id])
+  Event       Event     @relation(fields: [eventId], references: [id])
+}
+
+model User {
+  id        String   @id @unique
+  name      String
+  imageUrl  String?
 }
