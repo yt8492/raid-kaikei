@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as eventDB from '../infra/event';
 import { Event } from '@prisma/client';
 import {verifyIdToken} from '../api/LineApi';
@@ -33,3 +33,41 @@ try {
       url: `https://line.yuorei.com/invite/${data.id}`
     });
   }
+
+export const getEventById = (req: Request, res: Response, next: NextFunction) => (async () => {
+  const eventId = req.params["id"];
+  const event = await eventDB.getEventById(eventId);
+  if (event === null) {
+    res.status(404);
+    return;
+  }
+  const users = await eventDB.getUsersByEventId(event.id);
+  const eventPayments = await eventDB.getPaymentsByEventId(event.id);
+  const total = eventPayments.reduce((acc, val) => acc + val.amount, 0);
+  const remeiningAmount = users.reduce((acc, user) => {
+    if (user.fixedPayment !== null) {
+      return acc - user.fixedPayment;
+    } else {
+      return acc;
+    }
+  }, total);
+  const notFixedUserCount = users.filter((u => u.fixedPayment === null)).length;
+  const notFixedUserAmount = Math.floor(remeiningAmount / notFixedUserCount);
+  const paymentUsers = users.map((u => {
+    const payment = u.fixedPayment !== null ? u.fixedPayment : notFixedUserAmount;
+    return {
+      id: u.userId,
+      name: u.User.name,
+      imageUrl: u.User.imageUrl,
+      payment: payment
+    }
+  }));
+  const resBody = {
+    id: event.id,
+    title: event.title,
+    totalPayment: total,
+    users: paymentUsers
+  };
+  res.status(200);
+  res.json(resBody);
+})().catch(next);
