@@ -1,5 +1,4 @@
-export default {
-  verifyIdToken: async (idToken: string, clientId: string) => {
+const verifyIdToken = async (idToken: string, clientId: string) => {
     const params = new URLSearchParams();
     params.append('id_token', idToken);
     params.append('client_id', clientId);
@@ -17,4 +16,5 @@ export default {
       image_url: payload.picture
     }
   }
-}
+
+export { verifyIdToken }

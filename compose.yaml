@@ -13,6 +13,7 @@ services:
       - CHANNEL_SECRET=${CHANNEL_SECRET}
       - CHANNEL_ACCESS_TOKEN=${CHANNEL_ACCESS_TOKEN}
       - CHANNEL_ID=${CHANNEL_ID}
+      - DATABASE_URL=${DATABASE_URL}
   db:
     image: mysql:latest
     ports:
