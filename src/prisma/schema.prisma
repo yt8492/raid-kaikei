@@ -1,0 +1,39 @@
+// schema.prisma
+
+// イベントテーブルの定義
+model Event {
+  id          String    @id @unique
+  title       String
+  description String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  UserEvents  UserEvent[]
+  EventPayments EventPayment[]
+}
+
+model UserEvent {
+  userId        String
+  eventId       String
+  paymentStatus Int
+  fixedPayment  Int?
+  @@id([userId, eventId])
+  User          User     @relation(fields: [userId], references: [id])
+  Event         Event    @relation(fields: [eventId], references: [id])
+}
+
+model EventPayment {
+  id          String    @id @unique
+  eventId     String
+  amount      Int
+  claimantId  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  User        User      @relation(fields: [claimantId], references: [id])
+  Event       Event     @relation(fields: [eventId], references: [id])
+}
+
+model User {
+  id        String   @id @unique
+  name      String
+  imageUrl  String?
+}
