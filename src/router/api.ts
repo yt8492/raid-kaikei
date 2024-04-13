@@ -11,7 +11,8 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
 
-router.post('/event' ,eventRouter.event);
+router.post('/event', eventRouter.event);
+router.get('/event/:id', eventRouter.getEventById)
 
 router.get('/verify', (req, res, next) => (async () => {
   const authorization = req.headers.authorization;
@@ -25,6 +26,5 @@ router.get('/verify', (req, res, next) => (async () => {
     res.status(400);
   }
 })().catch(next));
-
 
 export default router;
