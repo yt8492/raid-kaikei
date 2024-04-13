@@ -1,0 +1,44 @@
+// schema.prisma
+
+// イベントテーブルの定義
+model Event {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  // イベントとユーザーの関連性を定義
+  UserEvent   UserEvent[]
+  // イベント支払いとの関連性を定義
+  EventPayment EventPayment[]
+}
+
+// ユーザーイベントテーブルの定義
+model UserEvent {
+  user_id       String     // ユーザーID
+  event_id      Int        // イベントID
+  payment_status Boolean    // 支払いステータス
+  fixed_payment Boolean    // 固定支払いフラグ
+  // 主キーを複合キーとして定義
+  @@id([user_id, event_id])
+  // ユーザーとの関連性を定義
+  User          User       @relation(fields: [user_id], references: [id])
+  // イベントとの関連性を定義
+  Event         Event      @relation(fields: [event_id], references: [id])
+  // ユーザーイベントとイベント支払いの関連性を定義
+  EventPayment  EventPayment[]
+}
+
+// イベント支払いテーブルの定義
+model EventPayment {
+  id           Int       @id @default(autoincrement())
+  event_id     Int       // イベントID
+  amount       Int       // 金額
+  claimant_id  String    // 請求者ID
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  // イベントとの関連性を定義
+  Event        Event     @relation(fields: [event_id], references: [id])
+  // ユーザーイベントとの関連性を定義
+  UserEvent    UserEvent @relation(fields: [claimant_id], references: [user_id])
+}
