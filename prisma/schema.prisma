@@ -1,5 +1,15 @@
 // schema.prisma
 
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
+}
+
 // イベントテーブルの定義
 model Event {
   id          String    @id @unique
@@ -17,7 +27,6 @@ model UserEvent {
   paymentStatus Int
   fixedPayment  Int?
   @@id([userId, eventId])
-  User          User     @relation(fields: [userId], references: [id])
   Event         Event    @relation(fields: [eventId], references: [id])
 }
 
@@ -28,7 +37,6 @@ model EventPayment {
   claimantId  String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  User        User      @relation(fields: [claimantId], references: [id])
   Event       Event     @relation(fields: [eventId], references: [id])
 }
 

@@ -9,14 +9,6 @@ import {
 
 const app: Application = express()
 
-const middlewareConfig: MiddlewareConfig = {
-    channelSecret: process.env.CHANNEL_SECRET || '',
-};
-
-app.use(middleware(middlewareConfig));
-
-
-
 // CORS
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
@@ -28,7 +20,7 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use('/callback',callback);
+app.use('/callback', callback);
 app.use('/api', api);
 
 export default app;

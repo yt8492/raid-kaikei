@@ -13,8 +13,11 @@ services:
       - CHANNEL_SECRET=${CHANNEL_SECRET}
       - CHANNEL_ACCESS_TOKEN=${CHANNEL_ACCESS_TOKEN}
       - CHANNEL_ID=${CHANNEL_ID}
+      - DATABASE_URL=${DATABASE_URL}
   db:
     image: mysql:latest
+    ports:
+      - 3306:3306
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=database
