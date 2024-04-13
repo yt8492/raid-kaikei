@@ -1,12 +1,13 @@
-import express from 'express';
+import app from './server'
 
-const app = express();
-const port = 3000;
+const PORT = 3000
 
-app.post('/webhook', (_, res:any) => {
-    res.send('Hello, world!');
-});
-
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+try {
+  app.listen(PORT, () => {
+    console.log(`dev server running at: http://localhost:${PORT}/`)
+  })
+} catch (e) {
+  if (e instanceof Error) {
+    console.error(e.message)
+  }
+}

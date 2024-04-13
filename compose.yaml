@@ -5,6 +5,13 @@ services:
       - 3000:3000
     depends_on:
       - db
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=password
+      - DATABASE_NAME=database
+      - CHANNEL_SECRET=${CHANNEL_SECRET}
+      - CHANNEL_ACCESS_TOKEN=${CHANNEL_ACCESS_TOKEN}
   db:
     image: mysql:latest
     environment:
@@ -14,6 +21,7 @@ services:
       - MYSQL_PASSWORD=password
     volumes:
       - db_data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d 
 
 volumes:
   db_data:
