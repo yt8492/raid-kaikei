@@ -17,8 +17,8 @@ model Event {
   description String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  UserEvents  UserEvent[]
-  EventPayments EventPayment[]
+  // UserEvents  UserEvent[]
+  // EventPayments EventPayment[]
 }
 
 model UserEvent {
@@ -27,7 +27,7 @@ model UserEvent {
   paymentStatus Int
   fixedPayment  Int?
   @@id([userId, eventId])
-  Event         Event    @relation(fields: [eventId], references: [id])
+  // Event         Event    @relation(fields: [eventId], references: [id])
 }
 
 model EventPayment {
@@ -37,7 +37,7 @@ model EventPayment {
   claimantId  String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  Event       Event     @relation(fields: [eventId], references: [id])
+  // Event       Event     @relation(fields: [eventId], references: [id])
 }
 
 model User {
