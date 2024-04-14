@@ -13,6 +13,7 @@ router.use(express.urlencoded({ extended: true }));
 
 router.post('/event' ,eventRouter.event);
 router.post('/event/:id/join' ,eventRouter.eventJoin);
+router.post('/event/:id/' ,eventRouter.createPayEvent);
 router.get('/event' ,eventRouter.getevents);
 
 router.get('/verify', (req, res, next) => (async () => {
