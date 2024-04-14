@@ -1,5 +1,6 @@
+import e from 'express';
 import prisma from '../prisma/client';
-import { Event,UserEvent,EventPayment } from '@prisma/client';
+import { Event,UserEvent,EventPayment,User } from '@prisma/client';
 
 
 export const createEvent = async (event:Event) => {
@@ -51,21 +52,6 @@ export const joinEvent = async (input:UserEvent) => {
         throw new Error(`Error in getting all users: ${error}`);
     }
 }
-
-// export const getEvent = async (id:string) => {
-//     try {
-//         const data = await prisma.event.findUnique({
-//             where: {
-//                 id: id,
-//             }
-//         });
-//         return data as Event;
-//     }
-//     catch (error) {
-//         console.error("Error in getting all users:", error);
-//         throw new Error(`Error in getting all users: ${error}`);
-//     }
-// }
 
 export const getUserEvents = async (id:string) => {
     try {

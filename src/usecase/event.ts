@@ -212,3 +212,4 @@ export const getEventById = (req: Request, res: Response, next: NextFunction) =>
   res.status(200);
   res.json(resBody);
 })().catch(next);
+
