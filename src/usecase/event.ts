@@ -143,3 +143,33 @@ export const addFixedPayment = async (req: Request, res: Response): Promise<Resp
 
   return res.status(200).json(data);
 }
+
+export const getPayEvent = async (req: Request, res: Response): Promise<Response> => {
+  const eventId = req.params.id;
+  const payId = req.params.pay_id;
+
+
+  try {
+    const event = await eventDB.getEvent(eventId);
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+  } catch (error) {
+    console.error("Error in getting event:", error);
+    throw new Error(`Error in getting event: ${error}`);
+  }
+
+  let data: EventPayment;
+  try {
+    data = await eventDB.getPayEvent( payId);
+  } catch (error) {
+    console.error("Error in getting event:", error);
+    throw new Error(`Error in getting event: ${error}`);
+  }
+
+  if (!data) {
+    return res.status(404).json({ error: "Event not found" });
+  }
+
+  return res.status(200).json(data);
+}

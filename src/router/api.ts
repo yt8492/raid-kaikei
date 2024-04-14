@@ -15,6 +15,7 @@ router.post('/event' ,eventRouter.event);
 router.post('/event/:id/join' ,eventRouter.eventJoin);
 router.post('/event/:id/' ,eventRouter.createPayEvent);
 router.get('/event' ,eventRouter.getevents);
+router.get('/event/:id/:pay_id' ,eventRouter.getPayEvent);
 router.post('/event/:id/pay' ,eventRouter.addFixedPayment);
 
 router.get('/verify', (req, res, next) => (async () => {
