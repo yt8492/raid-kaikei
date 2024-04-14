@@ -18,6 +18,9 @@ router.get('/event' ,eventRouter.getevents);
 router.get('/event/:id/:pay_id' ,eventRouter.getPayEvent);
 router.post('/event/:id/pay' ,eventRouter.addFixedPayment);
 
+router.get('/event/:id', eventRouter.getEventById)
+
+
 router.get('/verify', (req, res, next) => (async () => {
   const authorization = req.headers.authorization;
   const clientId = process.env.CHANNEL_ID;
@@ -30,6 +33,5 @@ router.get('/verify', (req, res, next) => (async () => {
     res.status(400);
   }
 })().catch(next));
-
 
 export default router;

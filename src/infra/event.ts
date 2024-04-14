@@ -16,8 +16,8 @@ export const createEvent = async (event:Event) => {
         return data as Event;
     }
     catch (error) {
-        console.error("Error in getting all users:", error);
-        throw new Error(`Error in getting all users: ${error}`);
+        console.error("Error in create event:", error);
+        throw new Error(`Error in create event: ${error}`);
     }
 }
 
@@ -52,20 +52,20 @@ export const joinEvent = async (input:UserEvent) => {
     }
 }
 
-export const getEvent = async (id:string) => {
-    try {
-        const data = await prisma.event.findUnique({
-            where: {
-                id: id,
-            }
-        });
-        return data as Event;
-    }
-    catch (error) {
-        console.error("Error in getting all users:", error);
-        throw new Error(`Error in getting all users: ${error}`);
-    }
-}
+// export const getEvent = async (id:string) => {
+//     try {
+//         const data = await prisma.event.findUnique({
+//             where: {
+//                 id: id,
+//             }
+//         });
+//         return data as Event;
+//     }
+//     catch (error) {
+//         console.error("Error in getting all users:", error);
+//         throw new Error(`Error in getting all users: ${error}`);
+//     }
+// }
 
 export const getUserEvents = async (id:string) => {
     try {
@@ -135,5 +135,50 @@ export const getPayEvent = async (id:string) => {
     catch (error) {
         console.error("Error in getting all users:", error);
         throw new Error(`Error in getting all users: ${error}`);
+    }
+}
+
+export const getEventById = async (eventId: string) => {
+    try {
+        const data = await prisma.event.findFirst({
+            where: {
+                id: eventId
+            }
+        });
+        return data;
+    } catch (error) {
+        console.error("Error in getting event by id:", error);
+        throw new Error(`Error in getting event by id: ${error}`);
+    }
+}
+
+export const getUsersByEventId = async (eventId: string) => {
+    try {
+        const data = await prisma.userEvent.findMany({
+            where: {
+                eventId: eventId
+            },
+            include: {
+                User: true
+            }
+        });
+        return data;
+    } catch (error) {
+        console.error("Error in get users by event id:", error);
+        throw new Error(`Error in get users by event id: ${error}`)
+    }
+}
+
+export const getPaymentsByEventId = async (eventId: string) => {
+    try {
+        const data = await prisma.eventPayment.findMany({
+            where: {
+                eventId: eventId
+            }
+        });
+        return data;
+    } catch (error) {
+        console.error("Error in ge payments by event id:", error);
+        throw new Error(`Error in get payments by event id: ${error}`);
     }
 }

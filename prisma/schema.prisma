@@ -12,13 +12,13 @@ generator client {
 
 // イベントテーブルの定義
 model Event {
-  id          String    @id @unique
-  title       String
-  description String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  // UserEvents  UserEvent[]
-  // EventPayments EventPayment[]
+  id            String         @id @unique
+  title         String
+  description   String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  UserEvents    UserEvent[]
+  EventPayments EventPayment[]
 }
 
 model UserEvent {
@@ -26,22 +26,25 @@ model UserEvent {
   eventId       String
   paymentStatus Int
   fixedPayment  Int?
+  Event         Event  @relation(fields: [eventId], references: [id])
+  User          User   @relation(fields: [userId], references: [id])
+
   @@id([userId, eventId])
-  // Event         Event    @relation(fields: [eventId], references: [id])
 }
 
 model EventPayment {
-  id          String    @id @unique
-  eventId     String
-  amount      Int
-  claimantId  String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  // Event       Event     @relation(fields: [eventId], references: [id])
+  id         String   @id @unique
+  eventId    String
+  amount     Int
+  claimantId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  Event      Event    @relation(fields: [eventId], references: [id])
 }
 
 model User {
-  id        String   @id @unique
+  id        String      @id @unique
   name      String
   imageUrl  String?
+  UserEvent UserEvent[]
 }
