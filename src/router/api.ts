@@ -17,6 +17,7 @@ router.post('/event/:id/' ,eventRouter.createPayEvent);
 router.get('/event' ,eventRouter.getevents);
 router.get('/event/:id/:pay_id' ,eventRouter.getPayEvent);
 router.post('/event/:id/pay' ,eventRouter.addFixedPayment);
+router.get('/event/:id/pay' ,eventRouter.getPaymentsByEventId);
 
 router.get('/event/:id', eventRouter.getEventById)
 

@@ -12,7 +12,7 @@ export const createUser = async (payload: User) => {
         return data as User;
     } catch (error) {
         console.error("Error in create user:", error);
-        throw new Error(`Error in create user: ${error}`);
+        // throw new Error(`Error in create user: ${error}`);
     }
 }
 

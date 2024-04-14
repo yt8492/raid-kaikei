@@ -15,7 +15,7 @@ const verifyIdToken = async (idToken: string, clientId: string) => {
       'body': params.toString()
     });
     const payload = JSON.parse(await res.text());
-
+    console.log("トークン",payload);
     let user : User={
       id: payload.sub,
       name: payload.name,
@@ -23,7 +23,7 @@ const verifyIdToken = async (idToken: string, clientId: string) => {
   
     }
 
-   await userDB.createUser(user);
+   await userDB.createUser(user).catch((e) => console.error(e));
 
     return {
       id: payload.sub,
