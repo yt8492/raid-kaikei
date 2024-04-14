@@ -1,3 +1,8 @@
+import { create } from "domain";
+import { createSecureServer } from "http2";
+import { User } from '@prisma/client';
+import * as userDB from '../infra/user';
+
 const verifyIdToken = async (idToken: string, clientId: string) => {
     const params = new URLSearchParams();
     params.append('id_token', idToken);
@@ -10,6 +15,16 @@ const verifyIdToken = async (idToken: string, clientId: string) => {
       'body': params.toString()
     });
     const payload = JSON.parse(await res.text());
+    console.log("トークン",payload);
+    let user : User={
+      id: payload.sub,
+      name: payload.name,
+      imageUrl: payload.picture
+  
+    }
+
+   await userDB.createUser(user).catch((e) => console.error(e));
+
     return {
       id: payload.sub,
       name: payload.name,

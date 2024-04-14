@@ -32,7 +32,7 @@ import {
       replyToken: event.replyToken as string,
       messages: [{
         type: 'text',
-        text: event.message.text,
+        text: "こちらを開いてください\n\nhttps://liff.line.me/2004630740-GXNo7135",
       }],
     });
   };

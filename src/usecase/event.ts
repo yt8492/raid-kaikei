@@ -1,38 +1,229 @@
 import { NextFunction, Request, Response } from 'express';
 import * as eventDB from '../infra/event';
-import { Event } from '@prisma/client';
-import {verifyIdToken} from '../api/LineApi';
+import { Event,UserEvent,EventPayment } from '@prisma/client';
+import { verifyIdToken } from '../api/LineApi';
 import { v4 as uuidv4 } from 'uuid';
 
 export const event = async (req: Request, res: Response): Promise<Response> => {
+  const request = req.body;
 
-const request = req.body;
-
-// const eventInput = Event{
-const token =req.headers.authorization as string;
-const words = token.split(' ')[1];
-  let profile= await verifyIdToken(words, process.env.CHANNEL_ID as string);
+  const token = req.headers.authorization as string;
+  const words = token.split(' ')[1];
+  let profile = await verifyIdToken(words, process.env.CHANNEL_ID as string);
   if (!profile) {
     return res.status(400).json({ error: "Invalid token" });
   }
-const eventInput = {
-  id: uuidv4(),
-  title: request.title,
-  description: "",
-  createdAt: new Date(),
-  updatedAt: new Date(),
- };
- let data: Event;
-try {
-  data =await eventDB.createEvent(eventInput as Event);
-} catch (error) {
-  console.error("Error in creating user:", error);
-  throw new Error(`Error in creating user: ${error}`);
-}
-    return res.status(200).json({
-      url: `https://line.yuorei.com/invite/${data.id}`
-    });
+
+  const eventInput: Event = {
+    id: uuidv4(),
+    title: request.title,
+    description: "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  let data: Event;
+  try {
+    data = await eventDB.createEvent(eventInput);
+  } catch (error) {
+    console.error("Error in creating event:", error);
+    throw new Error(`Error in creating event: ${error}`);
   }
+
+  return res.status(200).json(
+    data
+  );
+}
+
+
+export const getevents = async (req: Request, res: Response): Promise<Response> => {
+  let data: Event[];
+  try {
+    data = await eventDB.getEvents();
+  } catch (error) {
+    console.error("Error in getting all events:", error);
+    throw new Error(`Error in getting all events: ${error}`);
+  }
+
+  // try {
+  //   for (let i = 0; i < data.length; i++) {
+  //     let data2 = await eventDB.getPaymentsByEventId(data[i].id);
+  //     data[i].totalPayment = data2.reduce((acc, val) => acc + val.amount, 0);
+  //     let users = await eventDB.getUsersByEventId(data[i].id);
+  //     let notFixedUserCount = users.filter((u => u.fixedPayment === null)).length;
+  //     let notFixedUserAmount = Math.floor(data[i].totalPayment / notFixedUserCount);
+  //     data[i].users = users.map((u => {
+  //       let payment = u.fixedPayment !== null ? u.fixedPayment : notFixedUserAmount;
+  //       return {
+  //         id: u.userId,
+  //         name: u.User.name,
+  //         imageUrl: u.User.imageUrl,
+  //         payment: payment
+  //       }
+  //     });
+  //   }
+  //   for (let i = 0; i < data.length; i++) {
+  //     // data[i].
+  //   let data2 = await eventDB.getPaymentsByEventId(data[i].id);
+  //   // data2.
+  //   }
+  // }
+  return res.status(200).json(data);
+}
+
+export const eventJoin = async (req: Request, res: Response): Promise<Response> => {
+  const eventId = req.params.id;
+
+  const token = req.headers.authorization as string;
+  const words = token.split(' ')[1];
+  let profile = await verifyIdToken(words, process.env.CHANNEL_ID as string);
+  if (!profile) {
+    return res.status(400).json({ error: "Invalid token" });
+  }
+
+  let data: UserEvent = {
+    eventId: eventId,
+    userId: profile.id,
+    paymentStatus: 0,
+    fixedPayment: null,
+  };
+  
+
+  try {
+    data = await eventDB.joinEvent(data);
+  } catch (error) {
+    console.error("Error in getting event:", error);
+    // throw new Error(`Error in getting event: ${error}`);
+    return res.status(500).json({ error: "Event internal serrver error" });
+  }
+
+  if (!data) {
+    return res.status(404).json({ error: "Event not found" });
+  }
+
+  return res.status(200).json("data");
+}
+
+export const createPayEvent = async (req: Request, res: Response): Promise<Response> => {
+  const eventId = req.params.id;
+  const request = req.body;
+
+  const token = req.headers.authorization as string;
+  const words = token.split(' ')[1];
+  let profile = await verifyIdToken(words, process.env.CHANNEL_ID as string);
+  if (!profile) {
+    return res.status(400).json({ error: "Invalid token" });
+  }
+
+  let data: EventPayment = {
+    id: uuidv4(),
+    eventId: eventId,
+    claimantId: profile.id,
+    amount: request.amount,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  try {
+    data = await eventDB.createPayEvent(data);
+  } catch (error) {
+    console.error("Error in getting event:", error);
+    throw new Error(`Error in getting event: ${error}`);
+  }
+
+  if (!data) {
+    return res.status(404).json({ error: "Event not found" });
+  }
+
+  return res.status(200).json(data);
+}
+
+export const addFixedPayment = async (req: Request, res: Response): Promise<Response> => {
+  const eventId = req.params.id;
+  const request = req.body;
+
+  const token = req.headers.authorization as string;
+  const words = token.split(' ')[1];
+  let profile = await verifyIdToken(words, process.env.CHANNEL_ID as string);
+  if (!profile) {
+    return res.status(400).json({ error: "Invalid token" });
+  }
+ console.log(request.amount as number);
+  let data: UserEvent = {
+    eventId: eventId,
+    userId: request.userId,
+    paymentStatus: 0,
+    fixedPayment: request.amount,
+  };
+
+  try {
+    data = await eventDB.addFixedPayment(data);
+  } catch (error) {
+    console.error("Error in getting event:", error);
+    throw new Error(`Error in getting event: ${error}`);
+  }
+
+  if (!data) {
+    return res.status(404).json({ error: "Event not found" });
+  }
+
+  return res.status(200).json(data);
+}
+
+export const getPayEvent = async (req: Request, res: Response): Promise<Response> => {
+  const eventId = req.params.id;
+  const payId = req.params.pay_id;
+
+
+  try {
+    const event = await eventDB.getEventById(eventId);
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+  } catch (error) {
+    console.error("Error in getting event:", error);
+    throw new Error(`Error in getting event: ${error}`);
+  }
+
+  let data: EventPayment;
+  try {
+    data = await eventDB.getPayEvent( payId);
+  } catch (error) {
+    console.error("Error in getting event:", error);
+    throw new Error(`Error in getting event: ${error}`);
+  }
+
+  if (!data) {
+    return res.status(404).json({ error: "Event not found" });
+  }
+
+  return res.status(200).json(data);
+}
+
+export const getPaymentsByEventId = async (req: Request, res: Response): Promise<Response> => {
+  const eventId = req.params.id;
+
+  try {
+    const event = await eventDB.getEventById(eventId);
+    if (!event) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+  } catch (error) {
+    console.error("Error in getting event:", error);
+    throw new Error(`Error in getting event: ${error}`);
+  }
+
+  let data: EventPayment[];
+  try {
+    data = await eventDB.getPaymentsByEventId(eventId);
+  } catch (error) {
+    console.error("Error in getting event:", error);
+    throw new Error(`Error in getting event: ${error}`);
+  }
+
+  return res.status(200).json(data);
+}
+
 
 export const getEventById = (req: Request, res: Response, next: NextFunction) => (async () => {
   const eventId = req.params["id"];
@@ -59,7 +250,8 @@ export const getEventById = (req: Request, res: Response, next: NextFunction) =>
       id: u.userId,
       name: u.User.name,
       imageUrl: u.User.imageUrl,
-      payment: payment
+      payment: payment,
+      fixed: u.fixedPayment !== null
     }
   }));
   const resBody = {
@@ -71,3 +263,4 @@ export const getEventById = (req: Request, res: Response, next: NextFunction) =>
   res.status(200);
   res.json(resBody);
 })().catch(next);
+
