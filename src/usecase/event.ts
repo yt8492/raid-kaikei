@@ -111,3 +111,35 @@ export const createPayEvent = async (req: Request, res: Response): Promise<Respo
 
   return res.status(200).json(data);
 }
+
+export const addFixedPayment = async (req: Request, res: Response): Promise<Response> => {
+  const eventId = req.params.id;
+  const request = req.body;
+
+  const token = req.headers.authorization as string;
+  const words = token.split(' ')[1];
+  let profile = await verifyIdToken(words, process.env.CHANNEL_ID as string);
+  if (!profile) {
+    return res.status(400).json({ error: "Invalid token" });
+  }
+
+  let data: UserEvent = {
+    eventId: eventId,
+    userId: profile.id,
+    paymentStatus: 0,
+    fixedPayment: request.amount,
+  };
+
+  try {
+    data = await eventDB.addFixedPayment(data);
+  } catch (error) {
+    console.error("Error in getting event:", error);
+    throw new Error(`Error in getting event: ${error}`);
+  }
+
+  if (!data) {
+    return res.status(404).json({ error: "Event not found" });
+  }
+
+  return res.status(200).json(data);
+}

@@ -101,3 +101,24 @@ export const createPayEvent = async (input:EventPayment) => {
         throw new Error(`Error in getting all users: ${error}`);
     }
 }
+
+export const addFixedPayment = async (input:UserEvent) => {
+    try {
+        const data = await prisma.userEvent.update({
+            where: {
+                userId_eventId: {
+                    eventId: input.eventId,
+                    userId: input.userId,
+                }
+            },
+            data: {
+                fixedPayment: input.fixedPayment,
+            }
+        });
+        return data as UserEvent;
+    }
+    catch (error) {
+        console.error("Error in getting all users:", error);
+        throw new Error(`Error in getting all users: ${error}`);
+    }
+}
